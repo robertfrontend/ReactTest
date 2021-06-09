@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom';
-import styled from 'styled-components'
+import styled from 'styled-components';
+
+import { DataContenxt } from '../context/DataContext';
 
 
 const TablaUsers = styled.div`
@@ -74,7 +76,13 @@ const ItemUser = styled.div`
 
 const Tabla = (props) => {
     const { cantidad, usuarios } = props;
-    console.log(usuarios);
+
+    const { setUsuario } = useContext(DataContenxt)
+
+    // guardar usuario selecionado en el estado
+    const handleUser = (usuario) => {
+        setUsuario(usuario)
+    }
 
     if (usuarios) {
         return (
@@ -87,7 +95,7 @@ const Tabla = (props) => {
                     {
                         usuarios.map(((usuario, index) => {
                             return (
-                                <ItemUser key={usuario.login}>
+                                <ItemUser key={usuario.login} onClick={() => handleUser(usuario)}>
                                     <Link to={`/detalles/${usuario.login}`} >
                                         <div className="indice">{index + 1}</div>
                                             <div className="avatar">

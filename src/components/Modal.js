@@ -70,7 +70,6 @@ const ModalInfo = styled.div `
 
 const Modal = (props) => {
     
-    console.log(props);
     const datos = props.datos
 
     return (
