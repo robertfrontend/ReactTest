@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 
@@ -28,7 +29,7 @@ const Header = () => {
         <>
             <ContenHeader>
                     <h1>
-                       <a href="/">  <i className="fab fa-github"></i> Github Users</a>
+                       <Link to="/">  <i className="fab fa-github"></i> Github Users</Link>
                     </h1>
             </ContenHeader>
         </>

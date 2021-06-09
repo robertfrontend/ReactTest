@@ -236,7 +236,7 @@ const DetailUser = (props) => {
                 </div>
                 <div className="userinfo" >
                     <h3><i className="fas fa-user"></i> {general.name} </h3>
-                    <h3><i className="fas fa-at"></i> {general.username}</h3>
+                    <h3><i className="fas fa-at"></i> {general.username === '' ? 'username' : general.username }</h3>
                     <h4><i className="fas fa-envelope"></i> {general.email ? general.email : 'No disponible' } </h4>
                     <p>
                         Biografia:

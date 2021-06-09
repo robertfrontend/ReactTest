@@ -15,14 +15,14 @@ import Footer from "./components/Footer";
 function App() {
   return (
     <>
-    <Header></Header>
     <Router>
+      <Header></Header>
         <Switch>
           <Route path='/' exact component={Home}/>
           <Route path='/detalles/:id' component={DetailUser}/>
       </Switch>
-      </Router>
       <Footer></Footer>
+      </Router>
     </>
   );
 }

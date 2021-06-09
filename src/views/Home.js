@@ -217,7 +217,8 @@ const Home = () => {
                 <Paginador>
                     <a href="#" className={page === 0 ? 'active' : ''} onClick={() => changePage(0)} >1</a>
                     <a href="#" className={page === 10 ? 'active' : ''} onClick={() => changePage(10)} >2</a>
-                    <a href="#" className={page === 20 ? 'active' : ''} onClick={() => changePage(20)} >3</a>
+                    <a href="#" className={page === 25 ? 'active' : ''} onClick={() => changePage(25)} >3</a>
+                    <a href="#" className={page === 50 ? 'active' : ''} onClick={() => changePage(50)} >4</a>
                 </Paginador>
 
 
