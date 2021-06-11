@@ -74,6 +74,14 @@ const ItemUser = styled.div`
     }
 `
 
+const NoResults = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`
+
 const Tabla = (props) => {
     const { cantidad, usuarios } = props;
 
@@ -84,13 +92,26 @@ const Tabla = (props) => {
         setUsuario(usuario)
     }
 
+
+    const hanldeRecargar = () => {
+        props.recargar()
+    }
+
     if (usuarios) {
         return (
             <>
              <TablaUsers >
                     
                     {
-                        usuarios.length === 0 ? <h3>No hay resultados</h3> : <h3>  Cantidad de usuarios: {cantidad} </h3>
+                        usuarios.length === 0 ?
+                            <>
+                                <NoResults>
+                                    <h3>No hay resultados</h3>
+                                    <br />
+                                    <button className="boton1" onClick={hanldeRecargar} >Recargar</button>
+                                </NoResults>
+                            </>
+                            : <h3>  Cantidad de usuarios: {cantidad} </h3>
                     }
                     {
                         usuarios.map(((usuario, index) => {

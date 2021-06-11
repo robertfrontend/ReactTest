@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import axios from 'axios'
 import Modal from '../components/Modal';
 
+import Loading from '../components/Loading';
+
 
 
 const HeaderUser = styled.div`
@@ -94,60 +96,9 @@ const ItemRepo = styled.div`
     @media (max-width: 1000px) {
         width: 100%;
     }
-`
-
-const ModalInfo = styled.div`
-    width: 100%;
-    height: 110vh !important;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0,1,20,.719);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .modal {
-        width: 450px;
-        background-color: white;
-        border-radius: 10px;
-        padding: 1em 1em;
-        display: flex;
-        flex-direction: column;
-        justify-content: centers;
-        align-items: center;
-        text-align: center;
-        div 
-        {
-            padding: 1em;
-            h1 {
-                color: #6c5ce7;
-            }
-            h3, h4{
-                font-weight: 400;
-            }
-        }
-    }
-
-    @media (max-width: 1000px) {
-        .modal {
-            width: 350px;
-        }
-
-    }
-
 `;
 
-
-const Loading = styled.div`
-    width: 100%;
-    text-align: center;
-    font-size: 5em;
-    color: #6c5ce7;
-`
-
 const DetailUser = (props) => {
-    const [user, setUser] = useState(props.match.params.id)
 
     const [general, setGeneral] = useState({})
     const [repos, setRepos] = useState([])
@@ -164,12 +115,15 @@ const DetailUser = (props) => {
         }
     }, [])
 
+    let usuario = props.match.params.id;
     const getDatosUser = async () => {
+
+
         setIsLoading(true)
         const url = 'https://api.github.com/users'
 
         try {
-            const response = await axios.get(`${url}/${user}`)
+            const response = await axios.get(`${url}/${usuario}`)
             const data = response.data
             setGeneral({
                 name: data.name,
@@ -190,14 +144,12 @@ const DetailUser = (props) => {
         } catch (error) {
             console.error(error, 'error');
         }
-        setIsLoading(false)
 
     }
 
     const getRepos = async () => {
-        setIsLoading(true)
         try {
-            const response = await axios.get(`https://api.github.com/users/${user}/repos`)
+            const response = await axios.get(`https://api.github.com/users/${usuario}/repos`)
             setRepos(response.data)
 
         } catch (error) {
@@ -221,7 +173,6 @@ const DetailUser = (props) => {
 
     if (isLoading) return (
         <Loading>
-           <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
         </Loading>
     )
 

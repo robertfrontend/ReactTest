@@ -35,15 +35,6 @@ const ModalInfo = styled.div `
                 font-weight: 400;
                 font-size: 105%;
             }
-            
-            a {
-                text-decoration: none;
-                padding: 8px 1em;
-                background-color: #6c5ce7;
-                color: white;
-                font-weight: 500;
-                border-radius: 5px;
-            }
         }
     }
 
@@ -95,7 +86,7 @@ const Modal = (props) => {
                         </div>
                     </div>
                     <div>
-                        <a href={datos.html_url} rel="noreferrer" target="_blank" >Ver repositorio <i className="fas fa-external-link-alt"></i></a>
+                        <a className="boton1" href={datos.html_url} rel="noreferrer" target="_blank" >Ver repositorio <i className="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
             </ModalInfo>

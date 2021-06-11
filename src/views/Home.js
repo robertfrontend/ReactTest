@@ -7,6 +7,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 
 import Tabla from '../components/Tabla';
+import Loading from '../components/Loading'
 
 
 const Filtro = styled.div`
@@ -24,12 +25,29 @@ const Filtro = styled.div`
     .palabra{
         input {
             margin-top: 5px;
-            padding: 8px 20px;
+            padding: 6px 20px;
             border-radius: 10px;
             border: 1px solid #6c5ce7;
             font-size: 80%;
             outline: none;
+        }
+        .boton1.inactive {
+            background-color: transparent;
+            border: 1px solid #6c5ce7;
+            color: #6c5ce7;
+        }
+        .boton1 .active {
+            background-color: #6c5ce7;
+            border: 1px solid #6c5ce7;
+            color: white;
 
+        }
+        .boton1 .active i {
+            padding-left: 0.5em;
+        }
+
+        button {
+            margin-top: 0.5em;
         }
     }
     .cantidad{
@@ -80,16 +98,9 @@ const Paginador = styled.div`
 }
 `;
 
-const Loading = styled.div`
-    width: 100%;
-    text-align: center;
-    font-size: 5em;
-    color: #6c5ce7;
-`;
-
 
 const Home = () => {
-    
+
     const [usuarios, setUsuarios] = useState([])
     const [newusuarios, setNewUsuarios] = useState([])
 
@@ -99,10 +110,15 @@ const Home = () => {
     const [page, setPage] = useState(0)
 
     const [isLoading, setLoading] = useState(false)
-    
+
+    const [inputsearch, setInputSearch] = useState('')
+    const [searchremote, setSearchRemote] = useState(false)
+    const [userremote, setUserRemote] = useState(null)
+
+
     useEffect(() => {
 
-        getUsers(cantidad);
+        getUsers(cantidad, 0);
         setPage(0)
 
     }, [])
@@ -120,9 +136,7 @@ const Home = () => {
     const getUsers = async (cantidad, thipage) => {
         setLoading(true)
         try {
-            const respuesta = await axios.get(
-                `https://api.github.com/users?since=${thipage}s&per_page=${cantidad}`,
-            )
+            const respuesta = await axios.get(`${url}?since=${thipage}s&per_page=${cantidad}`)
                 const data = respuesta.data
                 initUsers()
                 // estado para mostrar los uusarios por cantidad
@@ -158,20 +172,52 @@ const Home = () => {
         newusuarios.reverse()
     }
 
-    const onSearch = (value) => {
+    // almacenar los datos del input search
+    const onSearch = async (value) => {
         const query = value.target.value;
+        setInputSearch(query)
+    }
+
+
+    // hacer busqueda de usuarios
+    const handleBuscar = async () => {
+        setLoading(true)
+
+        // datos del input
+        const query = inputsearch
+
         if (query === '') {
             initUsers()
             getUsers(cantidad)
-         }
-        
+        }
+
         const temporal = [...usuarios]
         let respuesta = []
-        respuesta = temporal.filter(res => {
-            return res.login.toLowerCase().indexOf(query.toLowerCase()) > -1;
-        })
 
+        // busqueda local
+        if (!searchremote) {
+            respuesta = temporal.filter(res => {
+                return res.login.toLowerCase().indexOf(query.toLowerCase()) > -1;
+            })
+        }
+        // busqueda remota
+        else {
+            try {
+                const response = await axios.get(`${url}/${query}`)
+                respuesta = [response.data]
+
+            } catch (error) {
+
+            }
+        }
+
+        setLoading(false)
         setNewUsuarios([...respuesta])
+    } 
+
+    // cambiar el tipo de busqueda
+    const changeTypeSearch = () => {
+        setSearchRemote(searchremote ? false :  true)
     }
 
 
@@ -181,12 +227,10 @@ const Home = () => {
     }
 
 
-    if (isLoading) return (
-        <Loading>
-           <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-        </Loading>
-    )
-
+    const handleRecargar = () => {
+        setInputSearch('')
+        getUsers(cantidad, 0)
+    }
 
     return (
         <>
@@ -194,7 +238,20 @@ const Home = () => {
                 <Filtro>
                     <div className="palabra">
                         <h4>Buscar en la tabla</h4>
-                        <input type="text" placeholder="Buscar por nombre" onChange={onSearch} />
+                        <input type="text" placeholder="Buscar por nombre" onChange={onSearch} value={inputsearch}/>
+                        <button className="boton1" onClick={handleBuscar} ><i className="fas fa-search"></i></button>
+                        <br />
+                        <button className = {
+                            searchremote ? 'boton1 active' : ' boton1 inactive'
+                        }
+                        onClick = {
+                            changeTypeSearch
+                        } >
+                            Remota
+                            {
+                                searchremote ? <i className="fas fa-check"></i> : null
+                            }
+                        </button>
                     </div>
                     <div className="cantidad">
                         <h4>Cantidad Usuarios</h4>
@@ -212,14 +269,21 @@ const Home = () => {
                     </div>
                 </Filtro>
 
-                <Tabla usuarios={newusuarios} cantidad={cantidad} ></Tabla>
+                {
+                    isLoading ?
+                        <Loading></Loading>
+                        :
+                        <>
+                            <Tabla usuarios={newusuarios} cantidad={cantidad} recargar={handleRecargar} ></Tabla>
+                            <Paginador>
+                                <a href="#" className={page === 0 ? 'active' : ''} onClick={() => changePage(0)} >1</a>
+                                <a href="#" className={page === 10 ? 'active' : ''} onClick={() => changePage(10)} >2</a>
+                                <a href="#" className={page === 25 ? 'active' : ''} onClick={() => changePage(25)} >3</a>
+                                <a href="#" className={page === 50 ? 'active' : ''} onClick={() => changePage(50)} >4</a>
+                            </Paginador>
+                        </>
+                }
 
-                <Paginador>
-                    <a href="#" className={page === 0 ? 'active' : ''} onClick={() => changePage(0)} >1</a>
-                    <a href="#" className={page === 10 ? 'active' : ''} onClick={() => changePage(10)} >2</a>
-                    <a href="#" className={page === 25 ? 'active' : ''} onClick={() => changePage(25)} >3</a>
-                    <a href="#" className={page === 50 ? 'active' : ''} onClick={() => changePage(50)} >4</a>
-                </Paginador>
 
 
             </div>
